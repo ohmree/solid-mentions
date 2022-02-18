@@ -1,22 +1,15 @@
-import {
-  Handler,
-  SalteAuthError,
-  Utils,
-  OAuth2Provider,
-  OpenIDProvider,
-} from '@salte-auth/salte-auth';
-import { WebviewWindow } from '@tauri-apps/api/window';
+import { Handler, SalteAuthError, Utils } from '@salte-auth/salte-auth';
+import { tauri } from '@tauri-apps/api';
+import { Store } from 'tauri-plugin-store-api';
 
 export class Tauri extends Handler {
   public constructor(config?: Tauri.Config) {
-    super(config);
+    super({ ...config, navigate: 'reload' });
+
+    this.tauriStore = new Store('.settings.dat');
 
     this.config = Utils.Common.defaults(this.config, {
-      window: {
-        name: 'salte-tauri',
-        height: 600,
-        width: 600,
-      },
+      timeout: 10000,
     });
   }
 
@@ -25,80 +18,72 @@ export class Tauri extends Handler {
   }
 
   public get auto(): boolean {
-    return false;
+    return true;
   }
 
-  public async open(
-    options: Handler.OpenOptions,
-  ): Promise<OAuth2Provider.Validation | OpenIDProvider.Validation> {
-    const { url } = options;
-    const { name: title, height, width } = this.config.window ?? {};
-    const webview = new WebviewWindow('salte-tauri', {
-      url,
-      title,
-      height,
-      width,
-      alwaysOnTop: true,
-      center: true,
-      decorations: true,
-      focus: true,
-      resizable: false,
-      skipTaskbar: false,
-    });
+  public connected({ action }: Handler.ConnectedOptions): any {
+    return new Promise<void>(async (resolve, _reject) => {
+      if (!action) return resolve();
 
-    webview.once('tauri://error', () => {
-      throw new SalteAuthError({
-        message:
-          'We were unable to open the popup window, its likely that the request was blocked.',
-        code: 'popup_blocked',
-      });
-    });
+      const origin = await this.tauriStore.get<string>('origin');
 
-    // TODO: Find a better way of tracking when a Window closes.
-    return new Promise((resolve, reject) => {
-      webview.once('tauri://created', () => {
-        const location = new Location();
-        location.href = url;
+      if (!origin) return resolve();
 
+      await this.tauriStore.delete('origin');
+
+      if (action === 'login') {
+        // Does it make sense to navigate on 'logout'?
+        // NOTE: This order, matters since navigate modifies the location.
         const parsed = Utils.URL.parse(location);
+        this.navigate(origin);
+        return resolve(parsed);
+      }
+    });
+  }
 
-        webview.close();
-        resolve(parsed);
-      });
+  public open({
+    url,
+    timeout = this.config.timeout,
+  }: Tauri.OpenOptions): Promise<void> {
+    let location = document.location.href;
+    if (!location.endsWith('/')) {
+      location += '/';
+    }
+    void tauri.invoke('save_location', { location });
+    this.navigate(url);
+
+    return new Promise((_resolve, reject) => {
+      setTimeout(() => {
+        reject(
+          new SalteAuthError({
+            code: 'redirect_timeout',
+            message: `Timed out while redirecting.`,
+          }),
+        );
+      }, timeout);
     });
   }
 }
 
 export interface Tauri {
   config: Tauri.Config;
+  tauriStore: Store;
 }
 
 export declare namespace Tauri {
   export interface Config extends Handler.Config {
     /**
-     * The popup window configuration.
+     * The amount of time in ms before any login / logout requests will timeout.
+     *
+     * @default 10000
      */
-    window?: {
-      /**
-       * The name to attach to the popup window.
-       *
-       * @default 'salte-tauri'
-       */
-      name?: string;
+    timeout?: number;
+  }
 
-      /**
-       * The height of the popup window.
-       *
-       * @default 600
-       */
-      height?: number;
-
-      /**
-       * The width of the popup window.
-       *
-       * @default 600
-       */
-      width?: number;
-    };
+  export interface OpenOptions extends Handler.OpenOptions {
+    /**
+     * Override the configured timeout.
+     */
+    timeout?: number;
   }
 }
