@@ -5,13 +5,15 @@
   "scripts": {
     "dev": "vite-tauri dev",
     "build": "vite-tauri build",
-    "serve": "vite-tauri preview"
+    "serve": "vite-tauri preview",
+    "postinstall": "patch-package"
   },
   "license": "MIT",
   "packageManager": "pnpm@6.31.0",
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@iconify-json/bi": "^1.0.12",
+    "@milahu/patch-package-with-pnpm-support": "6.4.8",
     "@tauri-apps/cli": "^1.0.0-rc.5",
     "@twurple/api": "^5.0.17",
     "@twurple/auth": "^5.0.17",
@@ -27,7 +29,7 @@
     "unplugin-icons": "^0.13.0",
     "vite": "^2.7.13",
     "vite-plugin-solid": "^2.2.5",
-    "vite-plugin-tauri": "^1.1.0",
+    "vite-plugin-tauri": "1.1.0",
     "vite-tsconfig-paths": "^3.4.0"
   },
   "dependencies": {
