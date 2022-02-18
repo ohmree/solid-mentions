@@ -41,7 +41,7 @@ export class Tauri extends Handler {
     });
   }
 
-  public open({
+  public async open({
     url,
     timeout = this.config.timeout,
   }: Tauri.OpenOptions): Promise<void> {
@@ -49,7 +49,7 @@ export class Tauri extends Handler {
     if (!location.endsWith('/')) {
       location += '/';
     }
-    void tauri.invoke('save_location', { location });
+    await tauri.invoke('save_location', { location });
     this.navigate(url);
 
     return new Promise((_resolve, reject) => {
