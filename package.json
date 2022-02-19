@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.2",
-    "@salte-auth/popup": "^3.0.4",
+    "@salte-auth/redirect": "^3.0.4",
     "@salte-auth/salte-auth": "^3.1.8",
     "@solid-primitives/event-listener": "^1.4.2",
     "@solid-primitives/fetch": "^1.0.6",

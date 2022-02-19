@@ -80,11 +80,12 @@ const Mentions: Component = () => {
     }
   });
 
-  $computed(async () => {
+  const track = $reaction(async () => {
     if (!isConnected()) {
       await chat.client.connect();
     }
   });
+  track(isConnected);
 
   const displayName = 'ohmree';
   createEventListener(document, 'visibilitychange', () => {
@@ -94,7 +95,7 @@ const Mentions: Component = () => {
   });
 
   return (
-    <$show when={authService().user} fallback={<Navigate href="/login" />}>
+    <$show when={authService().isLoggedIn} fallback={<Navigate href="/login" />}>
       <Container className="my-5">
         <Row>
           <Col xs="12" lg="3">

@@ -5,7 +5,7 @@ specifiers:
   '@iconify-json/bi': ^1.0.12
   '@milahu/patch-package-with-pnpm-support': 6.4.8
   '@popperjs/core': ^2.11.2
-  '@salte-auth/popup': ^3.0.4
+  '@salte-auth/redirect': ^3.0.4
   '@salte-auth/salte-auth': ^3.1.8
   '@solid-primitives/event-listener': ^1.4.2
   '@solid-primitives/fetch': ^1.0.6
@@ -38,7 +38,7 @@ specifiers:
 
 dependencies:
   '@popperjs/core': 2.11.2
-  '@salte-auth/popup': 3.0.4_@salte-auth+salte-auth@3.1.8
+  '@salte-auth/redirect': 3.0.4_@salte-auth+salte-auth@3.1.8
   '@salte-auth/salte-auth': 3.1.8
   '@solid-primitives/event-listener': 1.5.0_solid-js@1.3.7
   '@solid-primitives/fetch': 1.0.6_solid-js@1.3.7
@@ -645,8 +645,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /@salte-auth/popup/3.0.4_@salte-auth+salte-auth@3.1.8:
-    resolution: {integrity: sha512-f8yXK9+T2bsiqXCCA+ob8UaqIQMkt39t6E0DCXaUnF/kPZXkPBb35nYK+fD0eaOgYT99iKWou81SN3ExrYCVbA==}
+  /@salte-auth/redirect/3.0.4_@salte-auth+salte-auth@3.1.8:
+    resolution: {integrity: sha512-En5aP9Ur9bc99yREew+Gwjq8Lw2a9yML4Ek5z/hsZbKj7nRvMor926B1rk0a+l/eW59iAz1H+aXxkBep5F+kIA==}
     peerDependencies:
       '@salte-auth/salte-auth': ^3.0.0
     dependencies:
